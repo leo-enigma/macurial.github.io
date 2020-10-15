@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 细说HTTP Cache · Leo's Blog</title><meta name="description" content="细说HTTP Cache - Tauleos"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://tauleos.github.io/atom.xml" title="Leo's Blog"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Leo's Blog" type="application/atom+xml">
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">HOME</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVES</a></li><li class="nav-list-item"><a href="/tags/" target="_self" class="nav-list-link">TAGS</a></li><li class="nav-list-item"><a href="https://github.com/Tauleos" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">细说HTTP Cache</h1><div class="post-info">2019年5月7日</div><div class="post-content"><p><img src="/images/1557042361870.png" alt="headers"></p>
+<a id="more"></a>
+
+<p>在之前的文章<a href="https://tauleos.github.io/2019/04/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98%E7%90%86%E8%AE%BA/">浏览器缓存理论</a>中，我们详细解释了浏览器缓存的几种方式，其中的Disk Cache主要使用的便是HTTP协议中的缓存机制。浏览器会根据请求的结果和缓存标识，会判断是直接从缓存中读取数据还是向服务器发请求判断缓存的有效性，前者被称为<strong>强缓存</strong>，后者被称为<strong>协商缓存</strong>。</p>
+<h2 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h2><p>即不会向服务器发请求获取资源，直接在缓存中读取数据。在控制台中 HTTP status 为200,Size 显示from memory cache 或者 from disk cache;由两个http header 字段来控制：<strong>Expires和Cache-Control</strong>。</p>
+<h3 id="Expires"><a href="#Expires" class="headerlink" title="Expires"></a>Expires</h3><ul>
+<li>用来指定资源到期的时间,是一个具体的时间点。</li>
+<li>是HTTP/1的产物，如果修改了本地时间，会造成缓存失效。有一定的局限性。</li>
+</ul>
+<h3 id="Cache-Control"><a href="#Cache-Control" class="headerlink" title="Cache-Control"></a>Cache-Control</h3><p>是HTTP/1.1的产物，可以组合多种指令</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>public</td>
+<td>表示可以被客户端和代理服务器缓存</td>
+</tr>
+<tr>
+<td>private</td>
+<td>表示只可以被客户端缓存</td>
+</tr>
+<tr>
+<td>max-age=30</td>
+<td>资源30秒之后就过期，需要重新请求</td>
+</tr>
+<tr>
+<td>s-max-age=30</td>
+<td>覆盖max-age,作用相同，只在<strong>代理服务器</strong>中生效</td>
+</tr>
+<tr>
+<td>no-store</td>
+<td>不缓存任何响应</td>
+</tr>
+<tr>
+<td>no-cache</td>
+<td>资源会被缓存，但是立即失效，下次会发起请求验证资源是否过期</td>
+</tr>
+<tr>
+<td>max-scale=30</td>
+<td>30秒内，即使缓存过期，也使用该资源(无敌金身期)</td>
+</tr>
+<tr>
+<td>min-fresh=30</td>
+<td>希望在30秒内获取最新的响应</td>
+</tr>
+</tbody></table>
+<div class="tip">强缓存判断是否缓存的依据来自于是否超出某个时间或者某个时间段，而不关心服务器端文件是否已经更新</div>
+
+<h2 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h2><p>在强缓存失效之后，浏览器会携带缓存标识向服务器发起请求，服务器会根据缓存标识来和浏览器协商资源的缓存情况，这一过程称之为协商缓存。协商成功，返回304和空的响应体，协商失败，返回200和新的资源。</p>
+<h2 id="Last-Modified和If-Modified-Since"><a href="#Last-Modified和If-Modified-Since" class="headerlink" title="Last-Modified和If-Modified-Since"></a>Last-Modified和If-Modified-Since</h2><ul>
+<li>浏览器在第一次访问资源的时候，服务器会在response header中加入last-Modified=timevalue(该资源的最后修改时间)，浏览器接收到响应，会将资源和header一同缓存起来。</li>
+<li>浏览器再次请求该资源时，会将Last-Modified的值timevalue放在If-Modified-Since中，即If-Modified-Since=timevalue</li>
+<li>服务器接收到请求，会将timevalue与该资源的最后修改时间进行对比，如果没有变化，返回304和空的响应体，如果timevalue小于最后修改时间，说明资源发生了变化，返回200和新的资源。</li>
+</ul>
+<p>但是Last-Modified存在一些弊端：</p>
+<ul>
+<li>如果本地打开缓存文件，不管有没有修改，都会造成Last-Modified 的值发生变化，服务端不能命中缓存导致发送同样的资源</li>
+<li>因为Last-Modified的值是以秒为最小单位，如果在不可感知的时间内修改完成文件，服务端还是会认为资源会命中，不返回正确的资源。</li>
+</ul>
+<h2 id="Etag和If-None-Match"><a href="#Etag和If-None-Match" class="headerlink" title="Etag和If-None-Match"></a>Etag和If-None-Match</h2><p><strong>Etag是服务器响应请求时，返回当前资源文件的一个唯一标识(由服务器生成)，只要资源有变化，Etag就会重新生成</strong>。</p>
+<ul>
+<li>同上面Last_Modified类似,第一次请求的时候，服务器会生成一个唯一标示作为Etag的值(hashvalue)返回给浏览器</li>
+<li>浏览器再次请求资源的时候，会把hashvalue(Etag的值)作为请求头里的If-None-Match 的值。服务器只需要比对这两个值是否一致，就可以很好地判断资源有没有被修改过。</li>
+</ul>
+<h2 id="二者对比"><a href="#二者对比" class="headerlink" title="二者对比"></a>二者对比</h2><ul>
+<li>在精度上，Etag优于Last-Modified</li>
+<li>在性能上，Etag逊于Last-Modified</li>
+<li>在优先级上，Etag高于Last-Modified</li>
+</ul>
+<h1 id="缓存优先级"><a href="#缓存优先级" class="headerlink" title="缓存优先级"></a>缓存优先级</h1><ul>
+<li>强缓存优先于协商缓存</li>
+<li>如果没有设置任何缓存策略，浏览器会采用启发式算法，通常会取响应头中的Date减去Last-Modified 值的 10% 作为缓存时间。</li>
+</ul>
+<p>参考文章</p>
+<p><a target="_blank" rel="noopener" href="https://juejin.im/post/5c22ee806fb9a049fb43b2c5">一文读懂前端缓存</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/54cc04190252">深入理解浏览器的缓存机制</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.alloyteam.com/2016/03/discussion-on-web-caching/">浅谈Web缓存</a></p>
+</div></article></div></main><footer><div class="paginator"><a href="/b7436f608b7a.html" class="prev">上一篇</a><a href="/5720ed7e6faf.html" class="next">下一篇</a></div><div id="gitalk-container"></div><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" async></script><script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js" async></script><script>var ds = document.createElement('link');
+ds.rel = 'stylesheet';ds.async = true;
+ds.href = 'https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css';
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+window.onload = function() {
+  var gitalk = new Gitalk({
+    clientID: '62e01f3aa3f140c5af8a',
+    clientSecret: '8f02698609ba488706c5e67839f0bbf46861554f',
+    repo: 'Tauleos.github.io',
+    owner: 'Tauleos',
+    admin: ['Tauleos'],
+    id: md5(window.location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+  gitalk.render('gitalk-container');
+}</script><div class="copyright"><p id="host_by"><span id="busuanzi_container_site_pv">&nbsp;本站总访问量 &nbsp;<span id="busuanzi_value_site_pv"><i class="fa fa-spinner"></i></span> 次,</span><span id="busanzi_container_site_uv">&nbsp;本站总访问人数 &nbsp;<span id="busuanzi_value_site_uv"><i class="fa fa-spinner"></i></span> 次.</span></p><p>© 2017 - 2020 created by <a href="https://tauleos.github.io">Tauleos</a>,Looking for better life and peace.</p><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body></html>

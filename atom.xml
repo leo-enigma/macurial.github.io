@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Leo&#39;s Blog</title>
+  
+  <subtitle>Don&#39;t Worry, Be happy</subtitle>
+  <link href="https://tauleos.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://tauleos.github.io/"/>
+  <updated>2020-10-15T09:33:55.072Z</updated>
+  <id>https://tauleos.github.io/</id>
+  
+  <author>
+    <name>Tauleos</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>自动化版本管理探索</title>
+    <link href="https://tauleos.github.io/b7436f608b7a.html"/>
+    <id>https://tauleos.github.io/b7436f608b7a.html</id>
+    <published>2020-10-15T06:38:46.000Z</published>
+    <updated>2020-10-15T09:33:55.072Z</updated>
+    
+    <content type="html"><![CDATA[<p>在我们日常Coding过程中，经常会有开发类库的需求</p><a id="more"></a><p>开发完成发布之后，后续版本管理，更新日志等问题也随之而来，如何解决这些问题呢？</p><h1 id="一、手打"><a href="#一、手打" class="headerlink" title="一、手打"></a>一、手打</h1><ul><li>手动更改版本号</li><li>手动变成更新日志</li><li>手动发布到npm私服</li><li>噢耶，完工</li></ul><div class="tip">你确定你是认真的么❓️❓️❓️手动黑人问号脸都2020年了还不能自动化吗？</div><h1 id="二、自动化"><a href="#二、自动化" class="headerlink" title="二、自动化"></a>二、自动化</h1><p>回到正题，如果有一种工具，我们只需要简单输入命令行，轻轻敲一下回车，就可以轻松帮我们完成手动的那些工作，。我们只需要噢耶，岂不快哉。</p><p>于是，在伟大的github上捕捉到了以下三种工具</p><ul><li>standard-version</li><li>semantic-release</li><li>lerna</li></ul><hr><blockquote><p>让我们来详细的分别了解一下这三位选手</p></blockquote><h2 id="1、Lerna"><a href="#1、Lerna" class="headerlink" title="1、Lerna"></a>1、Lerna</h2><p>不用说。先淘汰吧😂️。毕竟这家伙核心价值是多项目管理，跟我们的需求毫不沾边</p><h2 id="2、standard-version"><a href="#2、standard-version" class="headerlink" title="2、standard-version"></a>2、standard-version</h2><p>根据介绍，它的核心价值观在于语义化版本控制、打tag以及CHANGELOG生成。更为加分的是它还是代码提交规范组织的官方出品<br><img src="/images/version-management/standard-version.png" alt="sv"></p><blockquote><p>A utility for versioning using semver and CHANGELOG generation powered by Conventional Commits. </p></blockquote><p>听上去蛮符合我们的要求，使用方法也简单</p><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">standard-version</span><br></pre></td></tr></table></figure><p>基本上可以满足我们的日常需求。使用起来也满足我们的初始目标，一键Enter，搞定所有，我们只需要将更改推送到服务器，并且发布就好</p><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">git push --follow-tags origin master &amp;&amp; npm publish</span><br></pre></td></tr></table></figure><h2 id="3、semantic-release"><a href="#3、semantic-release" class="headerlink" title="3、semantic-release"></a>3、semantic-release</h2><p>打开文档介绍，原来这货的核心驱动力在于workflow。</p><blockquote><p>semantic-release automates the whole package release workflow including: determining the next version number, generating the release notes and publishing the package.</p></blockquote><p>相比楼上那位，该选手给我们提供了一整套完备的工作流，通过它我们可以:</p><ul><li>全自动release</li><li>强制语义化说明</li><li>插件化配置</li><li>与CI/CD默认集成<br>剩下的还有好多。。。大家可以去官网看。。。</li></ul><p>使用方法<br>A、使用的话会稍微复杂一点，类似babel，需要在项目中增加一个 <strong>.releaserc</strong> 文件进行插件配置</p><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;branches&quot;</span>: <span class="string">&quot;master&quot;</span>,</span><br><span class="line">  <span class="comment">// &quot;debug&quot;: true,</span></span><br><span class="line">  <span class="comment">// &quot;dryRun&quot;: true, // semantic-release默认在ci中工作，如果需要调试可以打开这个开关</span></span><br><span class="line">  <span class="string">&quot;plugins&quot;</span>: [</span><br><span class="line">    <span class="string">&quot;@semantic-release/commit-analyzer&quot;</span>,</span><br><span class="line">    <span class="string">&quot;@semantic-release/release-notes-generator&quot;</span>,</span><br><span class="line">    <span class="string">&quot;@semantic-release/changelog&quot;</span>,</span><br><span class="line">    [</span><br><span class="line">      <span class="string">&quot;@semantic-release/npm&quot;</span>,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">&quot;npmPublish&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="string">&quot;tarballDir&quot;</span>: <span class="string">&quot;dist&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    ],</span><br><span class="line">    [</span><br><span class="line">      <span class="string">&quot;@semantic-release/git&quot;</span>,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">&quot;assets&quot;</span>: [<span class="string">&quot;package.json&quot;</span>, <span class="string">&quot;CHANGELOG.md&quot;</span>],</span><br><span class="line">        <span class="string">&quot;message&quot;</span>: <span class="string">&quot;chore(蛋糕):$&#123;nextRelease.version&#125; [skip ci]\n\n$&#123;nextRelease.notes&#125;&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    ],</span><br><span class="line">    [</span><br><span class="line">      <span class="string">&quot;@semantic-release/gitlab&quot;</span>,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="string">&quot;gitlabUrl&quot;</span>: <span class="string">&quot;https://git.com/&quot;</span>,</span><br><span class="line">        <span class="string">&quot;assets&quot;</span>: <span class="string">&quot;dist/*.tgz&quot;</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  ],</span><br><span class="line">  <span class="string">&quot;preset&quot;</span>: <span class="string">&quot;angular&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>B、同时需要在ci中增加配置，在项目中配置CI所需要的环境变量,包括<code>GL_TOKEN</code>、<code>NPM_USERNAME</code>、<code>NPM_EMAIL</code>、<code>NPM_PASSWORD</code>等</p><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="comment"># - test</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">release</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line"> </span><br><span class="line"><span class="attr">publish:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">node:10</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">release</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&#x27;//registry.npm.org/:username=$&#123;NPM_USERNAME&#125;&#x27;</span><span class="string">&gt;&gt;.npmrc</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&#x27;//registry.npm.org/:email=$&#123;NPM_EMAIL&#125;&#x27;</span><span class="string">&gt;&gt;.npmrc</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">&#x27;//registry.npm.org/:_password=$&#123;NPM_PASSWORD&#125;&#x27;</span><span class="string">&gt;&gt;.npmrc</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">npx</span> <span class="string">semantic-release</span></span><br></pre></td></tr></table></figure><p>C、最重要的一点，需要在gitlab中开启<code>PersonalAccessToken</code>（前提是开启2FA配置，照着步骤走，挺麻烦的也能走通），并设置在CI/CD的变量中<br><img src="/images/version-management/pas.png" alt="pat"></p><p>D、上述步骤做好，便可以把所有改动推送到远程仓库，坐等它带给你的惊喜</p><div class="tip">哈哈，其实除了跟楼上一样的效果之外，还额外生成了gitLab中的Release。当然如果不需要的话也可以干掉它，不过这么专业的操作，为啥不保留呢，对不对~😄️</div><h2 id="4、standard-version-VS-semantiv-release"><a href="#4、standard-version-VS-semantiv-release" class="headerlink" title="4、standard-version VS semantiv-release"></a>4、standard-version VS semantiv-release</h2><table><thead><tr><th align="center">功能点</th><th align="center">standard-version</th><th align="center">semantic-release</th><th align="center">说明</th></tr></thead><tbody><tr><td align="center">版本控制</td><td align="center">✅</td><td align="center">✅</td><td align="center">会根据提交的信息类型来自动更改对应的版本号,如下:<br> feat: 次版本(minor)+1 <br>  fix: 修订号(patch) +1 <br> BREAK CHANGE: 主板号(marjor) +1</td></tr><tr><td align="center">CHANGELOG</td><td align="center">✅</td><td align="center">✅</td><td align="center">均基于Angular Commit 规则</td></tr><tr><td align="center">gitTag标记</td><td align="center">✅</td><td align="center">✅</td><td align="center"></td></tr><tr><td align="center">npm自动发布</td><td align="center"></td><td align="center">✅</td><td align="center"></td></tr><tr><td align="center">CI集成</td><td align="center">⚠️️</td><td align="center">✅</td><td align="center">standard-version 可以手动实现</td></tr><tr><td align="center">pre-release实现</td><td align="center">✅</td><td align="center">✅</td><td align="center">standard-version：通过可选参数<br>semantic-release:通过分支设置</td></tr><tr><td align="center">gitlab release</td><td align="center"></td><td align="center">✅</td><td align="center"></td></tr></tbody></table><h1 id="三、结论"><a href="#三、结论" class="headerlink" title="三、结论"></a>三、结论</h1><p>standard-version与semantic-release 都是令人惊叹的工具，不管使用哪一个都能够最大限度的满足我们的需求。当然两个工具的侧重点是不一样的。所以我们可以根据自己的喜好来选择。<br>在我个人看来：</p><div class="tip">standard-version 偏向于小工具开发，自行决定类库的版本，并且可以在发布前进行修改semantic-release 偏向于workflow，多人协作下通过mr进行需求的迭代</div>当然，无论采取哪种姿势，我们的核心目标只有一个：<p><img src="/images/version-management/dkam.png" alt="killAllHumans"><br>完~</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;在我们日常Coding过程中，经常会有开发类库的需求&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="架构" scheme="https://tauleos.github.io/tags/%E6%9E%B6%E6%9E%84/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>细说HTTP Cache</title>
+    <link href="https://tauleos.github.io/fa64e05e0810.html"/>
+    <id>https://tauleos.github.io/fa64e05e0810.html</id>
+    <published>2019-05-07T02:27:48.000Z</published>
+    <updated>2019-05-07T06:18:27.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="/images/1557042361870.png" alt="headers"></p><a id="more"></a><p>在之前的文章<a href="https://tauleos.github.io/2019/04/12/%E6%B5%8F%E8%A7%88%E5%99%A8%E7%BC%93%E5%AD%98%E7%90%86%E8%AE%BA/">浏览器缓存理论</a>中，我们详细解释了浏览器缓存的几种方式，其中的Disk Cache主要使用的便是HTTP协议中的缓存机制。浏览器会根据请求的结果和缓存标识，会判断是直接从缓存中读取数据还是向服务器发请求判断缓存的有效性，前者被称为<strong>强缓存</strong>，后者被称为<strong>协商缓存</strong>。</p><h2 id="强缓存"><a href="#强缓存" class="headerlink" title="强缓存"></a>强缓存</h2><p>即不会向服务器发请求获取资源，直接在缓存中读取数据。在控制台中 HTTP status 为200,Size 显示from memory cache 或者 from disk cache;由两个http header 字段来控制：<strong>Expires和Cache-Control</strong>。</p><h3 id="Expires"><a href="#Expires" class="headerlink" title="Expires"></a>Expires</h3><ul><li>用来指定资源到期的时间,是一个具体的时间点。</li><li>是HTTP/1的产物，如果修改了本地时间，会造成缓存失效。有一定的局限性。</li></ul><h3 id="Cache-Control"><a href="#Cache-Control" class="headerlink" title="Cache-Control"></a>Cache-Control</h3><p>是HTTP/1.1的产物，可以组合多种指令</p><table><thead><tr><th>指令</th><th>作用</th></tr></thead><tbody><tr><td>public</td><td>表示可以被客户端和代理服务器缓存</td></tr><tr><td>private</td><td>表示只可以被客户端缓存</td></tr><tr><td>max-age=30</td><td>资源30秒之后就过期，需要重新请求</td></tr><tr><td>s-max-age=30</td><td>覆盖max-age,作用相同，只在<strong>代理服务器</strong>中生效</td></tr><tr><td>no-store</td><td>不缓存任何响应</td></tr><tr><td>no-cache</td><td>资源会被缓存，但是立即失效，下次会发起请求验证资源是否过期</td></tr><tr><td>max-scale=30</td><td>30秒内，即使缓存过期，也使用该资源(无敌金身期)</td></tr><tr><td>min-fresh=30</td><td>希望在30秒内获取最新的响应</td></tr></tbody></table><div class="tip">强缓存判断是否缓存的依据来自于是否超出某个时间或者某个时间段，而不关心服务器端文件是否已经更新</div><h2 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h2><p>在强缓存失效之后，浏览器会携带缓存标识向服务器发起请求，服务器会根据缓存标识来和浏览器协商资源的缓存情况，这一过程称之为协商缓存。协商成功，返回304和空的响应体，协商失败，返回200和新的资源。</p><h2 id="Last-Modified和If-Modified-Since"><a href="#Last-Modified和If-Modified-Since" class="headerlink" title="Last-Modified和If-Modified-Since"></a>Last-Modified和If-Modified-Since</h2><ul><li>浏览器在第一次访问资源的时候，服务器会在response header中加入last-Modified=timevalue(该资源的最后修改时间)，浏览器接收到响应，会将资源和header一同缓存起来。</li><li>浏览器再次请求该资源时，会将Last-Modified的值timevalue放在If-Modified-Since中，即If-Modified-Since=timevalue</li><li>服务器接收到请求，会将timevalue与该资源的最后修改时间进行对比，如果没有变化，返回304和空的响应体，如果timevalue小于最后修改时间，说明资源发生了变化，返回200和新的资源。</li></ul><p>但是Last-Modified存在一些弊端：</p><ul><li>如果本地打开缓存文件，不管有没有修改，都会造成Last-Modified 的值发生变化，服务端不能命中缓存导致发送同样的资源</li><li>因为Last-Modified的值是以秒为最小单位，如果在不可感知的时间内修改完成文件，服务端还是会认为资源会命中，不返回正确的资源。</li></ul><h2 id="Etag和If-None-Match"><a href="#Etag和If-None-Match" class="headerlink" title="Etag和If-None-Match"></a>Etag和If-None-Match</h2><p><strong>Etag是服务器响应请求时，返回当前资源文件的一个唯一标识(由服务器生成)，只要资源有变化，Etag就会重新生成</strong>。</p><ul><li>同上面Last_Modified类似,第一次请求的时候，服务器会生成一个唯一标示作为Etag的值(hashvalue)返回给浏览器</li><li>浏览器再次请求资源的时候，会把hashvalue(Etag的值)作为请求头里的If-None-Match 的值。服务器只需要比对这两个值是否一致，就可以很好地判断资源有没有被修改过。</li></ul><h2 id="二者对比"><a href="#二者对比" class="headerlink" title="二者对比"></a>二者对比</h2><ul><li>在精度上，Etag优于Last-Modified</li><li>在性能上，Etag逊于Last-Modified</li><li>在优先级上，Etag高于Last-Modified</li></ul><h1 id="缓存优先级"><a href="#缓存优先级" class="headerlink" title="缓存优先级"></a>缓存优先级</h1><ul><li>强缓存优先于协商缓存</li><li>如果没有设置任何缓存策略，浏览器会采用启发式算法，通常会取响应头中的Date减去Last-Modified 值的 10% 作为缓存时间。</li></ul><p>参考文章</p><p><a href="https://juejin.im/post/5c22ee806fb9a049fb43b2c5">一文读懂前端缓存</a></p><p><a href="https://www.jianshu.com/p/54cc04190252">深入理解浏览器的缓存机制</a></p><p><a href="http://www.alloyteam.com/2016/03/discussion-on-web-caching/">浅谈Web缓存</a></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;&lt;img src=&quot;/images/1557042361870.png&quot; alt=&quot;headers&quot;&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="理论" scheme="https://tauleos.github.io/tags/%E7%90%86%E8%AE%BA/"/>
+    
+    <category term="http" scheme="https://tauleos.github.io/tags/http/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>React组件的生命周期</title>
+    <link href="https://tauleos.github.io/5720ed7e6faf.html"/>
+    <id>https://tauleos.github.io/5720ed7e6faf.html</id>
+    <published>2019-04-26T09:05:02.000Z</published>
+    <updated>2019-05-07T06:14:33.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>组件从被创建到被销毁的过程称为组件的生命周期。React为组件在不同的生命周期阶段提供了不同的生命周期方法，让开发者可以更好地控制组件的行为。<br> <strong>注意：只有class component 才具有生命周期方法，functional component 是没有生命周期方法的。因此不要在functional component中使用生命周期方法</strong></p><a id="more"></a><h1 id="生命周期如图所示"><a href="#生命周期如图所示" class="headerlink" title="生命周期如图所示"></a>生命周期如图所示</h1><p><img src="/images/1556269802577.webp" alt="生命周期图"></p><h1 id="生命周期的三个阶段"><a href="#生命周期的三个阶段" class="headerlink" title="生命周期的三个阶段"></a>生命周期的三个阶段</h1><h2 id="挂载阶段"><a href="#挂载阶段" class="headerlink" title="挂载阶段"></a>挂载阶段</h2><blockquote><p>这个阶段组件被创建，执行初始化,并被挂载到DOM中，完成组件的第一次渲染。该阶段的方法有:</p><p>1.<a href="#constructor">constructor</a><br>2.<a href="#componentWillMount">componentWillMount</a><br>3.<a href="#render">render</a><br>4.<a href="#componentDidMount">componentDidMount</a></p></blockquote><h3 id="constructor-NaN"><a href="#constructor-NaN" class="headerlink" title="constructor"></a>constructor</h3><p>这是ES6的<strong>class</strong>的构造方法，通常用于<strong>初始化组件的state以及绑定事件处理方法等工作</strong></p><h3 id="componentWillMount"><a href="#componentWillMount" class="headerlink" title="componentWillMount"></a>componentWillMount</h3><p>这个方法在组件被挂载到DOM前调用，<strong>且只会被调用一次</strong>，这个方法在实际项目中<strong>很少</strong>会用到，因为可以在该方法中执行的工作都可以提前到<strong>constructor</strong>中。<strong>在这个方法中调用setState不会引起组件的重新渲染</strong></p><h3 id="render"><a href="#render" class="headerlink" title="render"></a>render</h3><p>根据组件的pops和state返回一个React元素，该元素用于描述组件的UI。在该方法中不能执行任何有副作用的操作，所以不能在render中调用setState，会改变组件的状态。</p><h3 id="componentDidMount"><a href="#componentDidMount" class="headerlink" title="componentDidMount"></a>componentDidMount</h3><p>在组件被挂载到DOM后调用，<strong>且只会被调用一次</strong>。这个时候已经可以获取到DOM结构，<strong>因此依赖DOM节点的操作可以放到这个方法中。这个方法通常还用于向服务端请求数据</strong>。调用this.setState 会引起组件的重新渲染。</p><h2 id="更新阶段"><a href="#更新阶段" class="headerlink" title="更新阶段"></a>更新阶段</h2><p>组件被挂载到DOM后，组件的props或state改变会引起组件的更新。</p><ul><li>props引起的更新，本质上是由渲染该组件的父组件引起的(也就是当父组件的render方法被调用时，组件会发生更新过程)，无论props是否改变，父组件render方法每一次调用，都会导致组件更新。</li><li>state引起的组件更新，是通过this.setState修改组件的state触发的。<br>组件更新阶段依次调用的方法有：</li></ul><p>1.<a href="#componentWillReceiveProps(nextProps)">componentWillReceiveProps</a><br>2.<a href="#shouldComponentUpdate(nextProps,nextState)">shouldComponentUpdate</a><br>3.<a href="#componentWillUpdate">componentWillUpdate</a><br>4.<a href="#render">render</a><br>5.<a href="#componentDidUpdate(prevProps,prevState)">componentDidUpdate</a></p><h3 id="componentWillReceiveProps-nextProps"><a href="#componentWillReceiveProps-nextProps" class="headerlink" title="componentWillReceiveProps(nextProps)"></a>componentWillReceiveProps(nextProps)</h3><ul><li>该方法只在props引起的组件更新过程中，才会被调用。state引起的组件更新并不会触发。</li><li>nextProps是父组件传递给当前组件的新的props</li><li>nextProps的值可能与子组件当前props的值相同，因此往往需要比较他俩的值来决定是否执行props发生变化后的逻辑。</li><li><strong>在该方法中调用setState，只有render以及之后的方法中。this.state指向的才是更新后的state。在之前的shouldComponentUpdate、componentWillUpdate中。this.state指向的还是更新前的state</strong></li></ul><h3 id="shouldComponentUpdate-nextProps-nextState"><a href="#shouldComponentUpdate-nextProps-nextState" class="headerlink" title="shouldComponentUpdate(nextProps,nextState)"></a>shouldComponentUpdate(nextProps,nextState)</h3><ul><li>该方法决定组件是否继续执行更新过程。当该方法返回true(默认值)时继续执行，返回false时停止执行</li><li>一般通过比较nextProps、nextState与组件当前的props、state来决定返回值。</li><li>该方法可用来减少不必要的渲染，从而<strong>优化组件的性能</strong></li></ul><h3 id="componentWillUpdate"><a href="#componentWillUpdate" class="headerlink" title="componentWillUpdate"></a>componentWillUpdate</h3><p>该方法在组件render之前调用执行，可以作为组件更新前执行某些工作的地方。一般很少用到</p><blockquote><p>shouldComponentUpdate 与componentWillUpdate中不能调用this.setState,否则会引起循环调用问题，render永远无法被调用，组件也永远无法渲染</p></blockquote><h3 id="componentDidUpdate-prevProps-prevState"><a href="#componentDidUpdate-prevProps-prevState" class="headerlink" title="componentDidUpdate(prevProps,prevState)"></a>componentDidUpdate(prevProps,prevState)</h3><p>组件更新后被调用，可以作为操作更新后的DOM的地方。两个参数代表组件更新前的props和state</p><h2 id="卸载阶段"><a href="#卸载阶段" class="headerlink" title="卸载阶段"></a>卸载阶段</h2><p>组件的卸载阶段只有一个方法：</p><h3 id="componentWillUnmount"><a href="#componentWillUnmount" class="headerlink" title="componentWillUnmount"></a>componentWillUnmount</h3><p>该方法在组件被卸载前调用，可以在这里执行一些清理工作，比如清楚定时器，清除<a href="#didMount">componentDidMount</a>中手动创建的DOM元素等等。防止内存泄露</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;组件从被创建到被销毁的过程称为组件的生命周期。React为组件在不同的生命周期阶段提供了不同的生命周期方法，让开发者可以更好地控制组件的行为。&lt;br&gt; &lt;strong&gt;注意：只有class component 才具有生命周期方法，functional component 是没有生命周期方法的。因此不要在functional component中使用生命周期方法&lt;/strong&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="js" scheme="https://tauleos.github.io/tags/js/"/>
+    
+    <category term="react" scheme="https://tauleos.github.io/tags/react/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>浏览器缓存理论</title>
+    <link href="https://tauleos.github.io/652b679860cc.html"/>
+    <id>https://tauleos.github.io/652b679860cc.html</id>
+    <published>2019-04-12T07:25:49.000Z</published>
+    <updated>2019-05-07T06:07:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>缓存可以说是性能优化中简单高效的一种优化方式，可以缩短网页请求资源的距离，减少延迟，并且由于缓存文件可以重复利用，还可以减少带宽，降低网络负荷。</p><a id="more"></a><h1 id="缓存位置"><a href="#缓存位置" class="headerlink" title="缓存位置"></a>缓存位置</h1><ul><li><a href="#Service-Worker">Service Worker</a></li><li><a href="#Memory-Cache">Memory Cache</a></li><li><a href="#DisK-Cache">DisK Cache</a></li><li><a href="#Push-Cache">Push Cache</a></li></ul><h2 id="Service-Worker"><a href="#Service-Worker" class="headerlink" title="Service Worker"></a>Service Worker</h2><p>Service Worker 是运行在浏览器背后的独立线程，一般可以用来实现缓存功能，必须基于HTTPS协议。<strong>Service Worker 的缓存与浏览器其他内建的缓存机制不同，它可以让我们自由控制缓存哪些文件、如何匹配缓存、如何读取缓存，并且缓存是持续性的。</strong><br>Service Worker 实现缓存功能一般分为三个步骤：</p><ul><li>注册service Worker</li><li>监听install时间</li><li>缓存需要的文件</li></ul><p>缓存之后，Service Worker 可以拦截下次的请求来查询是否存在缓存。如果没有命中缓存，需要使用fetch函数去请求数据(根据缓存优先级来获取数据；但是还是现实在Service Worker中获取的内容)。</p><h2 id="Memory-Cache"><a href="#Memory-Cache" class="headerlink" title="Memory Cache"></a>Memory Cache</h2><p>Memory Cache 是内存中的缓存，主要包括当前页面中已经抓取的资源(已经下载的样式、脚本、图片等)。在内存中读取缓存速度快，读取高效，但是持续性很短，会跟随进程的释放而释放。<br>以下几种情况下资源会被缓存在Memory Cache中：</p><ul><li>被预加载器(Preloader)获取的。</li><li>预加载指令(<link rel=preload>)</li><li>之前的DOM阶段或者CSS规则引起的请求。</li></ul><p>但是Memory Cache不会轻易的命中一个请求，除了要有匹配的URL，还要有相同的资源类型、CORS模式以及一些其他特性。</p><blockquote><p>Memory Cache匹配规则在标准中没有详尽的描述，所以不同的浏览器内核在实现上会有所不同。</p></blockquote><blockquote><p>Memory Cache是不关心HTTP语义的，比如Cache-Control: max-age=0的资源，仍然可以在同一个导航中被重用。但是在特定的情况下，Memory Cache会遵守Cache-Control: no-store指令，不缓存相应的资源。</p></blockquote><h2 id="Disk-Cache"><a href="#Disk-Cache" class="headerlink" title="Disk Cache"></a>Disk Cache</h2><p>Disk Cache 也就是我们经常说的HTTP Cache,顾名思义，它是存储在硬盘中的缓存，具有较强的时效性和大的容量性。<br>浏览器会把哪些文件丢进内存中？哪些丢进硬盘中？关于这点，网上说法不一，不过以下观点比较靠得住：</p><ul><li>对于大文件来说，大概率是不存储在内存中的，反之优先</li><li>当前系统内存使用率高的话，文件优先存储进硬盘</li></ul><h2 id="Push-Cache"><a href="#Push-Cache" class="headerlink" title="Push Cache"></a>Push Cache</h2><p>Push Cache（推送缓存）是 HTTP/2 中的内容，当以上三种缓存都没有命中时，它才会被使用。它只在会话（Session）中存在，一旦会话结束就被释放，并且缓存时间也很短暂，在Chrome浏览器中只有5分钟左右，同时它也并非严格执行HTTP头中的缓存指令。</p><ul><li>所有的资源都能被推送，并且能够被缓存,但是 Edge 和 Safari 浏览器支持相对比较差</li><li>可以推送 no-cache 和 no-store 的资源</li><li>一旦连接被关闭，Push Cache 就被释放</li><li>多个页面可以使用同一个HTTP/2的连接，也就可以使用同一个Push Cache。这主要还是依赖浏览器的实现而定，出于对性能的考虑，有的浏览器会对相同域名但不同的tab标签使用同一个HTTP连接。</li><li>Push Cache 中的缓存只能被使用一次</li><li>浏览器可以拒绝接受已经存在的资源推送</li><li>你可以给其他域名推送资源</li></ul><blockquote><p>如果以上四种缓存都没有命中的话，那么只能发起请求来获取资源了。</p></blockquote><h1 id="缓存过程分析"><a href="#缓存过程分析" class="headerlink" title="缓存过程分析"></a>缓存过程分析</h1><p><img src="/images/1557055357514.png" alt="img"><br>由上图可知：</p><ul><li>浏览器每次发起请求，都会先在浏览器缓存中查找该请求的结果以及缓存标识</li><li>浏览器每次拿到返回的请求结果都会将该结果和缓存标识存入浏览器缓存中<br>以上两点结论就是浏览器缓存机制的关键，它确保了每个请求的缓存存入与读取</li></ul><p>参考：<br><a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Cache-Control">mdn</a><br><a href="https://www.jianshu.com/p/54cc04190252">深入理解浏览器的缓存机制</a></p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;缓存可以说是性能优化中简单高效的一种优化方式，可以缩短网页请求资源的距离，减少延迟，并且由于缓存文件可以重复利用，还可以减少带宽，降低网络负荷。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="理论" scheme="https://tauleos.github.io/tags/%E7%90%86%E8%AE%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>js基础夯实-由一道面试题看js的两大概念</title>
+    <link href="https://tauleos.github.io/69d53cfb95a3.html"/>
+    <id>https://tauleos.github.io/69d53cfb95a3.html</id>
+    <published>2019-04-12T07:25:18.000Z</published>
+    <updated>2019-05-07T06:08:27.000Z</updated>
+    
+    
+    
+    
+    
+    <category term="js" scheme="https://tauleos.github.io/tags/js/"/>
+    
+    <category term="理论" scheme="https://tauleos.github.io/tags/%E7%90%86%E8%AE%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>js基础夯实-call,apply,bind的使用方式与区别</title>
+    <link href="https://tauleos.github.io/96cef8857dec.html"/>
+    <id>https://tauleos.github.io/96cef8857dec.html</id>
+    <published>2019-04-12T07:13:59.000Z</published>
+    <updated>2019-05-07T06:08:50.000Z</updated>
+    
+    
+    
+    
+    
+    <category term="js" scheme="https://tauleos.github.io/tags/js/"/>
+    
+    <category term="理论" scheme="https://tauleos.github.io/tags/%E7%90%86%E8%AE%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>js基础夯实-彻底搞懂this的指向问题</title>
+    <link href="https://tauleos.github.io/a74d1e8039ab.html"/>
+    <id>https://tauleos.github.io/a74d1e8039ab.html</id>
+    <published>2019-04-12T01:28:57.000Z</published>
+    <updated>2019-05-07T06:08:37.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>this 关键字是 JavaScript 中最复杂的机制之一，是一个特别的关键字，被自动定义在所有函数的作用域中.</p></blockquote><a id="more"></a><h1 id="为什么要搞懂this"><a href="#为什么要搞懂this" class="headerlink" title="为什么要搞懂this"></a>为什么要搞懂this</h1><ul><li>面向oop编程需要知道什么是this</li><li>在各种function调用过程中可以清晰的弄懂为什么。</li><li>可以更好的理解大师们的代码</li><li>防止面试被咔嚓。。。（血的教训）</li></ul><h1 id="this是什么？"><a href="#this是什么？" class="headerlink" title="this是什么？"></a>this是什么？</h1><p>顾名思义，this就是一个指针，但是他并不是指向自身！<strong>而是指向调用函数的对象</strong>。(这句话很重要。也是本篇文章贯穿始终的主旨。)</p><h1 id="this的指向判定标准"><a href="#this的指向判定标准" class="headerlink" title="this的指向判定标准"></a>this的指向判定标准</h1><h4 id="前人的判定"><a href="#前人的判定" class="headerlink" title="前人的判定"></a>前人的判定</h4><ol><li>函数是否是<code>new</code>调用，如果是，则指向<code>new</code>创建的实例。</li><li>函数是否是bind方法返回的？如果是，则this指向指定对象。</li><li>函数是否是通过<code>apply/call</code>调用的？如果是，则this指向指定对象。</li><li>是否作为对象的方法调用？ 如果是，则this指向该对象。</li><li>this指向全局。</li></ol><h4 id="为什么这样判定？"><a href="#为什么这样判定？" class="headerlink" title="为什么这样判定？"></a>为什么这样判定？</h4><p>为什么通过这五种方式来判定呢？我们首先要知道this的绑定规则有哪些？</p><ul><li>默认绑定</li><li>隐式绑定</li><li>显示绑定</li><li>new 绑定</li></ul><p>下面我们来分别挨个说明每个规则，来验证我们上述的判定标准。</p><h2 id="默认绑定"><a href="#默认绑定" class="headerlink" title="默认绑定"></a>默认绑定</h2><p>在不能应用其他绑定规则时使用的默认规则，通常是独立函数调用。</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getName</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Hello&#x27;</span>,<span class="built_in">this</span>.name);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> name = <span class="string">&#x27;mySelf&#x27;</span>;</span><br><span class="line">getName()</span><br></pre></td></tr></table></figure><p>在调用<code>getName</code>的时候,应用了默认绑定，在非严格模式下<code>this</code>指向全局对象,严格模式下<code>this</code>是<code>undefined</code>,</p><ul><li>在浏览器模式下<code>this</code>指向了全局对象<code>window</code>,所以运行结果是<code>HellomySelf</code></li><li>在node环境下<code>this</code>指向的全局对象是<code>node-runtime</code></li></ul><blockquote><p>在该文章中我们主要讨论浏览器中的表现。</p></blockquote><h2 id="隐式绑定"><a href="#隐式绑定" class="headerlink" title="隐式绑定"></a>隐式绑定</h2><p>函数的调用存在上下文关系,典型案例如abc.foo():</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    tag: <span class="string">&#x27;a&#x27;</span>,</span><br><span class="line">    func: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;b&#x27;</span>;</span><br><span class="line">obj.func();</span><br></pre></td></tr></table></figure><p>执行结果是<code>a</code>；那如果我把sayHi的定义提升到外边，如下所示：</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    tag: <span class="string">&#x27;obj&#x27;</span>,</span><br><span class="line">    func: h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span>;</span><br><span class="line">obj.func();</span><br></pre></td></tr></table></figure><p>执行结果跟上面是一样的。这是因为在函数<code>sayHi</code>调用的时候,此时的上下文对象属于<code>person</code>,<strong>隐式绑定会将函数中的<code>this</code>绑定到<code>person</code>这个上下文对象上</strong></p><blockquote><p>需要注意的是：在嵌套对象的调用时，只有离<code>this</code>最近的那一层会影响到调用位置。</p></blockquote><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">    tag: <span class="string">&#x27;obj1&#x27;</span>,</span><br><span class="line">    func: h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">  tag:<span class="string">&#x27;obj2&#x27;</span>,</span><br><span class="line">  obj:obj1</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span>;</span><br><span class="line">obj2.obj.func();</span><br></pre></td></tr></table></figure><p>结果是<code>obj1</code>,这是因为只有执行到<code>obj1.func</code>的时候，才能确定函数<code>h</code>中<code>this</code>指向的上下文对象为<code>obj1</code>.</p><div class="tip">    隐式绑定有一个很大的坑，就是会丢失绑定。也就是说，我们以为的this指向，其实并不是this真正的指向（我们以为他是雷锋，但是他却是雷峰塔）</div><p>隐式绑定的丢失主要体现在两个方面:</p><ol><li><p>函数重新赋值,如下面代码所示:</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">  tag:<span class="string">&#x27;obj1&#x27;</span>,</span><br><span class="line">  func:h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span></span><br><span class="line"><span class="keyword">var</span> callh = obj1.func;</span><br><span class="line">callh(); <span class="comment">//window</span></span><br></pre></td></tr></table></figure><p><strong>这是因为<code>callh</code>直接指向了函数<code>h</code>的引用，在执行<code>callh</code>的时候上下文对象为<code>document.window</code></strong></p></li><li><p>在回掉函数和事件回调中也会丢失绑定,如下代码所示</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">  tag:<span class="string">&#x27;obj1&#x27;</span>,</span><br><span class="line">  func:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">  tag:<span class="string">&#x27;obj2&#x27;</span>,</span><br><span class="line">  func:h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span></span><br><span class="line">obj1.func(); <span class="comment">// window</span></span><br><span class="line"><span class="built_in">setTimeout</span>(obj2.func,<span class="number">200</span>); <span class="comment">// window</span></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">  obj2.func()</span><br><span class="line">&#125;,<span class="number">200</span>)           <span class="comment">//obj2</span></span><br></pre></td></tr></table></figure><ul><li>第一个输出是因为命中了默认绑定,<code>this</code>指向了<code>document.window</code></li><li>第二个输出是因为<code>obj2.func</code>赋值给了<code>setTimeout</code>的回调入参之后又执行这个入参，所以隐式绑定丢失，<code>this</code>指向了<code>document.window</code></li><li>第三条输出是因为命中了隐式绑定，<code>this</code>指向了<code>obj2</code></li></ul></li></ol><h2 id="显式绑定"><a href="#显式绑定" class="headerlink" title="显式绑定"></a>显式绑定</h2><p>通过 <code>call,apply,bind</code> 的方式，显式的指定<code>this</code>所指向的对象。<code>call,apply,bind</code>的第一个参数，就是对应函数的<code>this</code>所指向的对象。<code>call</code>和<code>apply</code>的作用一样，只是传参方式不同。<code>call</code>和<code>apply</code>都会执行对应的函数，而<code>bind</code>方法不会。</p><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">    tag: <span class="string">&#x27;obj1&#x27;</span>,</span><br><span class="line">    func: h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> h2 = <span class="function"><span class="keyword">function</span>(<span class="params">func</span>)</span>&#123;</span><br><span class="line">  func()</span><br><span class="line">&#125;</span><br><span class="line">h2.call(obj1,obj1.func)   <span class="comment">//window</span></span><br></pre></td></tr></table></figure><p><strong>因为<code>obj1.func</code>作为入参传入的时候,已经丢失了隐式绑定的<code>this</code></strong></p><h2 id="new关键字绑定"><a href="#new关键字绑定" class="headerlink" title="new关键字绑定"></a><code>new</code>关键字绑定</h2><p>使用<code>new</code>来调用函数，会自动执行下面的操作：</p><ol><li>创建一个新对象</li><li>将构造函数的作用域赋值给新对象，即<code>this</code>指向这个新对象</li><li>执行构造函数中的代码</li><li>返回新对象</li></ol><h1 id="绑定优先级"><a href="#绑定优先级" class="headerlink" title="绑定优先级"></a>绑定优先级</h1><blockquote><p>new 绑定 &gt; 显式绑定 &gt; 隐式绑定 &gt; 默认绑定</p></blockquote><h1 id="绑定例外"><a href="#绑定例外" class="headerlink" title="绑定例外"></a>绑定例外</h1><p>如果我们将<code>null</code>或者是<code>undefined</code>作为<code>this</code>的绑定对象传入<code>call、apply、bind</code>, 这些值在调用时会被忽略，实际应用的是默认绑定规则。</p><h1 id="箭头函数"><a href="#箭头函数" class="headerlink" title="箭头函数"></a>箭头函数</h1><p>箭头函数是 ES6 中新增的，它和普通函数有一些区别，箭头函数没有自己的 this，它的 this 继承于外层代码库中的 this。箭头函数在使用时，需要注意以下几点:</p><ul><li>函数体内的 this 对象，继承的是外层代码块的 this。</li><li>不可以当作构造函数，也就是说，不可以使用 new 命令，否则会抛出一个错误。</li><li>不可以使用 arguments 对象，该对象在函数体内不存在。如果要用，可以用 rest 参数代替。</li><li>不可以使用 yield 命令，因此箭头函数不能用作 Generator 函数。</li><li>箭头函数没有自己的 this，所以不能用 call()、apply()、bind() 这些方法去改变 this 的指向.</li></ul><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1 . 函数是否在 new 中调用 (new 绑定)，如果是，那么 this 绑定的是新创建的对象。<br>2 . 函数是否通过 call,apply 调用，或者使用了 bind(即硬绑定)，如果是，那么 this 绑定的就是指定的对象。<br>3 . 函数是否在某个上下文对象中调用 (隐式绑定)，如果是的话，this 绑定的是那个上下文对象。一般是 obj.foo()。<br>4 . 如果以上都不是，那么使用默认绑定。如果在严格模式下，则绑定到 undefined，否则绑定到全局对象。<br>5 . 如果把 Null 或者 undefined 作为 this 的绑定对象传入 call、apply 或者 bind，这些值在调用时会被忽略，实际应用的是默认绑定规则。<br>6 . 如果是箭头函数，箭头函数的 this 继承的是外层代码块的 this。</p><p>参考</p><ul><li><a href="https://juejin.im/post/5c96d0c751882511c832ff7b">嗨，你真的懂this吗？</a></li><li><a href="http://www.ruanyifeng.com/blog/2010/04/using_this_keyword_in_javascript.html">Javascript 的 this 用法</a></li></ul>]]></content>
+    
+    
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;this 关键字是 JavaScript 中最复杂的机制之一，是一个特别的关键字，被自动定义在所有函数的作用域中.&lt;/p&gt;
+&lt;/blockquote&gt;</summary>
+    
+    
+    
+    
+    <category term="js" scheme="https://tauleos.github.io/tags/js/"/>
+    
+    <category term="理论" scheme="https://tauleos.github.io/tags/%E7%90%86%E8%AE%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>mac-v10.9.5安装nginx</title>
+    <link href="https://tauleos.github.io/abff08f12a22.html"/>
+    <id>https://tauleos.github.io/abff08f12a22.html</id>
+    <published>2019-03-25T11:04:45.000Z</published>
+    <updated>2019-05-07T06:09:01.000Z</updated>
+    
+    
+    
+    
+    
+    <category term="mac" scheme="https://tauleos.github.io/tags/mac/"/>
+    
+    <category term="nginx" scheme="https://tauleos.github.io/tags/nginx/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>安装redis</title>
+    <link href="https://tauleos.github.io/5d3c72d7cf56.html"/>
+    <id>https://tauleos.github.io/5d3c72d7cf56.html</id>
+    <published>2019-03-24T16:00:00.000Z</published>
+    <updated>2020-10-15T06:18:44.771Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="安装redis"><a href="#安装redis" class="headerlink" title="安装redis"></a>安装redis</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">wget http://redis.googlecode.com/files/redis-2.6.14.tar.gz</span><br><span class="line">tar -zxvf redis-2.6.14.tar.gz</span><br><span class="line"><span class="built_in">cd</span> redis-2.6.14</span><br><span class="line">make</span><br><span class="line">make PREFIX=/usr/<span class="built_in">local</span>/redis install</span><br></pre></td></tr></table></figure><a id="more"></a><h3 id="设置redis自启动"><a href="#设置redis自启动" class="headerlink" title="设置redis自启动"></a>设置redis自启动</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">mkdir -p /usr/<span class="built_in">local</span>/redis/&#123;etc,var&#125;</span><br><span class="line">cp redis.conf /usr/<span class="built_in">local</span>/redis/etc/</span><br></pre></td></tr></table></figure><h3 id="改配置"><a href="#改配置" class="headerlink" title="改配置"></a>改配置</h3><figure class="highlight zsh"><table><tr><td class="code"><pre><span class="line">nano /etc/rc.local</span><br></pre></td></tr></table></figure><blockquote><p>在最后一行加入</p></blockquote><figure class="highlight console"><table><tr><td class="code"><pre><span class="line">./usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf</span><br><span class="line">nano /usr/local/redis/etc/redis.conf #修改redis-conf配置文件</span><br><span class="line">port 10087 #设置端口为10087</span><br><span class="line">requirepass ehncf2000  #设置访问密码</span><br><span class="line">daemonize yes #修改后台运行</span><br><span class="line">timeout 300   #请求超时时间</span><br><span class="line">loglevel debug #log信息级别</span><br><span class="line">dbfilename dump.rdb #数据文件</span><br><span class="line">dir /usr/local/redis/etc/ #数据文件目录</span><br></pre></td></tr></table></figure><h3 id="加环境变量"><a href="#加环境变量" class="headerlink" title="加环境变量"></a>加环境变量</h3><figure class="highlight console"><table><tr><td class="code"><pre><span class="line">nano /etc/environment</span><br><span class="line">/usr/local/redis/bin/redis-server</span><br><span class="line">/usr/local/redis/bin/redis-benchmark</span><br><span class="line">/usr/local/redis/bin/redis-cli</span><br></pre></td></tr></table></figure><h3 id="启动redis"><a href="#启动redis" class="headerlink" title="启动redis"></a>启动redis</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+    <summary type="html">&lt;h3 id=&quot;安装redis&quot;&gt;&lt;a href=&quot;#安装redis&quot; class=&quot;headerlink&quot; title=&quot;安装redis&quot;&gt;&lt;/a&gt;安装redis&lt;/h3&gt;&lt;figure class=&quot;highlight sh&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;wget http://redis.googlecode.com/files/redis-2.6.14.tar.gz&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;tar -zxvf redis-2.6.14.tar.gz&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;cd&lt;/span&gt; redis-2.6.14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;make&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;make PREFIX=/usr/&lt;span class=&quot;built_in&quot;&gt;local&lt;/span&gt;/redis install&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;</summary>
+    
+    
+    
+    
+    <category term="linux" scheme="https://tauleos.github.io/tags/linux/"/>
+    
+    <category term="redis" scheme="https://tauleos.github.io/tags/redis/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>关于</title>
+    <link href="https://tauleos.github.io/6f088248fe63.html"/>
+    <id>https://tauleos.github.io/6f088248fe63.html</id>
+    <published>2019-01-25T11:09:48.000Z</published>
+    <updated>2019-04-14T10:31:51.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>这是关于的页面，可以在这里向世界介绍你！</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;这是关于的页面，可以在这里向世界介绍你！&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>每日一条linux命令之ln</title>
+    <link href="https://tauleos.github.io/c60b11b049f3.html"/>
+    <id>https://tauleos.github.io/c60b11b049f3.html</id>
+    <published>2018-08-04T08:43:17.000Z</published>
+    <updated>2019-05-07T06:07:25.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>ln是linux中又一个非常重要命令，它的功能是为某一个文件在另外一个位置建立一个同步的链接.当我们需要在不同的目录，用到相同的文件时，我们不需要在每一个需要的目录下都放一个必须相同的文件，我们只要在某个固定的目录，放上该文件，然后在 其它的目录下用ln命令链接（link）它就可以，不必重复的占用磁盘空间。</p><a id="more"></a><h3 id="命令格式"><a href="#命令格式" class="headerlink" title="命令格式"></a>命令格式</h3><blockquote><p>ln [参数][源文件或目录][目标文件或目录]</p></blockquote><h3 id="命令功能"><a href="#命令功能" class="headerlink" title="命令功能"></a>命令功能</h3><p>Linux文件系统中，有所谓的链接(link)，我们可以将其视为档案的别名，而链接又可分为两种 : 硬链接(hard link)与软链接(symbolic link)，硬链接的意思是一个档案可以有多个名称，而软链接的方式则是产生一个特殊的档案，该档案的内容是指向另一个档案的位置。硬链接是存在同一个文件系统中，而软链接却可以跨越不同的文件系统。</p><h4 id="软链接"><a href="#软链接" class="headerlink" title="软链接"></a>软链接</h4><ul><li>软链接，以路径的形式存在。类似于Windows操作系统中的快捷方式</li><li>软链接可以 跨文件系统 ，硬链接不可以</li><li>软链接可以对一个不存在的文件名进行链接</li><li>软链接可以对目录进行链接</li></ul><h4 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h4><ul><li>硬链接，以文件副本的形式存在。但不占用实际空间</li><li>不允许给目录创建硬链接</li><li>硬链接只有在同一个文件系统中才能创建</li></ul><p><strong>这里有两点要注意：</strong></p><ul><li>ln命令会保持每一处链接文件的同步性，也就是说，不论你改动了哪一处，其它的文件都会发生相同的变化</li><li>ln的链接又分软链接和硬链接两种，软链接就是ln –s 源文件 目标文件，它只会在你选定的位置上生成一个文件的镜像，不会占用磁盘空间，硬链接 ln 源文件 目标文件，没有参数-s， 它会在你选定的位置上生成一个和源文件大小相同的文件，无论是软链接还是硬链接，文件都保持同步变化。</li></ul><p>ln指令用在链接文件或目录，如同时指定两个以上的文件或目录，且最后的目的地是一个已经存在的目录，则会把前面指定的所有文件或目录复制到该目录中。若同时指定多个文件或目录，且最后的目的地并非是一个已存在的目录，则会出现错误信息。</p><h3 id="命令参数"><a href="#命令参数" class="headerlink" title="命令参数"></a>命令参数</h3><p>必要参数:</p><p>-b 删除，覆盖以前建立的链接</p><p>-d 允许超级用户制作目录的硬链接</p><p>-f 强制执行</p><p>-i 交互模式，文件存在则提示用户是否覆盖</p><p>-n 把符号链接视为一般目录</p><p>-s 软链接(符号链接)</p><p>-v 显示详细的处理过程</p><p>选择参数:</p><p>-S “-S&lt;字尾备份字符串&gt; ”或 “–suffix=&lt;字尾备份字符串&gt;”</p><p>-V “-V&lt;备份方式&gt;”或“–version-control=&lt;备份方式&gt;”</p><p>–help 显示帮助信息</p><p>–version 显示版本信息</p>]]></content>
+    
+    
+    <summary type="html">&lt;h2 id=&quot;简介&quot;&gt;&lt;a href=&quot;#简介&quot; class=&quot;headerlink&quot; title=&quot;简介&quot;&gt;&lt;/a&gt;简介&lt;/h2&gt;&lt;p&gt;ln是linux中又一个非常重要命令，它的功能是为某一个文件在另外一个位置建立一个同步的链接.当我们需要在不同的目录，用到相同的文件时，我们不需要在每一个需要的目录下都放一个必须相同的文件，我们只要在某个固定的目录，放上该文件，然后在 其它的目录下用ln命令链接（link）它就可以，不必重复的占用磁盘空间。&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="linux" scheme="https://tauleos.github.io/tags/linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>php mysql批量插入</title>
+    <link href="https://tauleos.github.io/6e9c090d6e03.html"/>
+    <id>https://tauleos.github.io/6e9c090d6e03.html</id>
+    <published>2017-10-01T14:37:41.000Z</published>
+    <updated>2019-05-07T06:16:04.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="使用insert-into-插入："><a href="#使用insert-into-插入：" class="headerlink" title="使用insert into 插入："></a>使用insert into 插入：</h1><p><img src="/images/1557048704921.png" alt="insert"></p><a id="more"></a><h1 id="使用事务脚本提交"><a href="#使用事务脚本提交" class="headerlink" title="使用事务脚本提交"></a>使用事务脚本提交</h1><blockquote><p> vi /backup/backup.sh</p></blockquote><h2 id="现在把以下几行命令输入到-backup-sh-文件中："><a href="#现在把以下几行命令输入到-backup-sh-文件中：" class="headerlink" title="现在把以下几行命令输入到 backup.sh 文件中："></a>现在把以下几行命令输入到 backup.sh 文件中：</h2><p><img src="/images/1557048885175.png" alt="shell"></p><blockquote><p>脚本说明</p></blockquote><ol><li><strong>切记，在第8行命令中，在mysqldump命令后要输入自己的数据库用户名、密码及数据库名。</strong></li><li>执行该脚本，首先会进入 /backup 目录，然后该脚本会把原有的旧数据库备份移动到 /oldbackup 文件夹中，接着根据系统的日期及时间生成一个文件名，在最后 mysqldump 命令会生成一个“.sql”格式的数据库备份文件。</li></ol><h2 id="设置-backup-sh-脚本文件的可执行许可"><a href="#设置-backup-sh-脚本文件的可执行许可" class="headerlink" title="设置 backup.sh 脚本文件的可执行许可"></a>设置 backup.sh 脚本文件的可执行许可</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">chmod +x /backup/backup.sh</span><br></pre></td></tr></table></figure><h2 id="5、执行脚本"><a href="#5、执行脚本" class="headerlink" title="5、执行脚本"></a>5、执行脚本</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./backup.sh</span><br></pre></td></tr></table></figure><blockquote><p>脚本运行结束后会得到以下输入。</p></blockquote><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@Server1:/download<span class="comment">#./backup.sh</span></span><br><span class="line">You areinDownload Directory</span><br><span class="line">Old Backup DatabaseisMoved to oldbackup folder</span><br><span class="line">database backup successful completed</span><br><span class="line">root@Server1:/download<span class="comment">#</span></span><br></pre></td></tr></table></figure><p><strong>注：首次执行该脚本会有一个“no such file”的提示信息，这是由于旧备份文件还不存在。只要再次执行该脚本就没有问题了，这个问题已经不存在了。</strong></p><h2 id="使用cron制订备份计划"><a href="#使用cron制订备份计划" class="headerlink" title="使用cron制订备份计划"></a>使用cron制订备份计划</h2><blockquote><p>使用Cron可以定时执行该脚本，备份会自动完成。使用 crontab 命令编辑cron 执行的计划任务。</p></blockquote><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab –e</span><br></pre></td></tr></table></figure><h4 id="只要在编辑器上加入下面这一行代码保存即可。"><a href="#只要在编辑器上加入下面这一行代码保存即可。" class="headerlink" title="只要在编辑器上加入下面这一行代码保存即可。"></a>只要在编辑器上加入下面这一行代码保存即可。</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">013* * * * /backup/backup.sh</span><br></pre></td></tr></table></figure><p><strong>本任务表示的是在每天下午1点钟把数据库备份到指定的文件夹。有关cron任务设置的详细内容可以查阅crontab手册</strong></p>]]></content>
+    
+    
+    <summary type="html">&lt;h1 id=&quot;使用insert-into-插入：&quot;&gt;&lt;a href=&quot;#使用insert-into-插入：&quot; class=&quot;headerlink&quot; title=&quot;使用insert into 插入：&quot;&gt;&lt;/a&gt;使用insert into 插入：&lt;/h1&gt;&lt;p&gt;&lt;img src=&quot;/images/1557048704921.png&quot; alt=&quot;insert&quot;&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    
+    <category term="php" scheme="https://tauleos.github.io/tags/php/"/>
+    
+    <category term="mysql" scheme="https://tauleos.github.io/tags/mysql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>命令行备份数据库</title>
+    <link href="https://tauleos.github.io/11263d42178f.html"/>
+    <id>https://tauleos.github.io/11263d42178f.html</id>
+    <published>2017-10-01T14:37:41.000Z</published>
+    <updated>2019-05-07T06:09:41.000Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="主脚本（用于备份mysql数据库）："><a href="#主脚本（用于备份mysql数据库）：" class="headerlink" title="主脚本（用于备份mysql数据库）："></a>主脚本（用于备份mysql数据库）：</h1><blockquote><p>该Shell脚本可以自动备份数据库。只要复制粘贴本脚本到文本编辑器中，输入数据库用户名、密码以及数据库名即可。我备份数据库使用的是mysqlump 命令。后面会对每行脚本命令进行说明。</p></blockquote><h2 id="1、分别建立目录“backup”和“oldbackup”"><a href="#1、分别建立目录“backup”和“oldbackup”" class="headerlink" title="1、分别建立目录“backup”和“oldbackup”"></a>1、分别建立目录“backup”和“oldbackup”</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">mkdir /backup</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">mkdir /oldbackup</span></span><br></pre></td></tr></table></figure><h2 id="2、现在使用你喜欢的编辑软件创建并编辑-backup-sh"><a href="#2、现在使用你喜欢的编辑软件创建并编辑-backup-sh" class="headerlink" title="2、现在使用你喜欢的编辑软件创建并编辑 backup.sh"></a>2、现在使用你喜欢的编辑软件创建并编辑 backup.sh</h2><blockquote><p>这里我用的是 vi</p></blockquote><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> vi /backup/backup.sh</span></span><br></pre></td></tr></table></figure><h2 id="3、-现在把以下几行命令输入到-backup-sh-文件中："><a href="#3、-现在把以下几行命令输入到-backup-sh-文件中：" class="headerlink" title="3、 现在把以下几行命令输入到 backup.sh 文件中："></a>3、 现在把以下几行命令输入到 backup.sh 文件中：</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">!bin/bash</span></span><br><span class="line"></span><br><span class="line">cd /backup</span><br><span class="line"></span><br><span class="line">echo “You are In Backup Directory”</span><br><span class="line"></span><br><span class="line">mv backup* /oldbackup</span><br><span class="line"></span><br><span class="line">echo “Old Databases are Moved to oldbackup folder”</span><br><span class="line"></span><br><span class="line">Now=$(date +”%d-%m-%Y--%H:%M:%S”)</span><br><span class="line"></span><br><span class="line">File=backup-$Now.sql</span><br><span class="line"></span><br><span class="line">mysqldump –u user-name  –p ‘password’ database-name &gt; $File</span><br><span class="line"></span><br><span class="line">echo “Your Database Backup Successfully Completed”</span><br></pre></td></tr></table></figure><blockquote><p>脚本说明：</p></blockquote><blockquote><p><strong>切记，在第8行命令中，在mysqldump命令后要输入自己的数据库用户名、密码及数据库名。</strong></p></blockquote><blockquote><p>执行该脚本，首先会进入 /backup 目录，然后该脚本会把原有的旧数据库备份移动到 /oldbackup 文件夹中，接着根据系统的日期及时间生成一个文件名，在最后 mysqldump 命令会生成一个“.sql”格式的数据库备份文件。</p></blockquote><h2 id="4、-设置-backup-sh-脚本文件的可执行许可"><a href="#4、-设置-backup-sh-脚本文件的可执行许可" class="headerlink" title="4、 设置 backup.sh 脚本文件的可执行许可"></a>4、 设置 backup.sh 脚本文件的可执行许可</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> chmod +x /backup/backup.sh</span></span><br></pre></td></tr></table></figure><h2 id="5、执行脚本"><a href="#5、执行脚本" class="headerlink" title="5、执行脚本"></a>5、执行脚本</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">./backup.sh</span></span><br></pre></td></tr></table></figure><blockquote><p>脚本运行结束后会得到以下输入。</p></blockquote><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">root@Server1:/download#./backup.sh</span><br><span class="line"></span><br><span class="line">You areinDownload Directory</span><br><span class="line"></span><br><span class="line">Old Backup DatabaseisMoved to oldbackup folder</span><br><span class="line"></span><br><span class="line">database backup successful completed</span><br><span class="line"></span><br><span class="line">root@Server1:/download#</span><br><span class="line"></span><br></pre></td></tr></table></figure><blockquote><p>注：首次执行该脚本会有一个“no such file”的提示信息，这是由于旧备份文件还不存在。只要再次执行该脚本就没有问题了，这个问题已经不存在了。</p></blockquote><h2 id="6、-使用cron制订备份计划"><a href="#6、-使用cron制订备份计划" class="headerlink" title="6、 使用cron制订备份计划"></a>6、 使用cron制订备份计划</h2><blockquote><p>使用Cron可以定时执行该脚本，备份会自动完成。使用 crontab 命令编辑cron 执行的计划任务。</p></blockquote><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">crontab –e</span></span><br><span class="line"></span><br></pre></td></tr></table></figure><h4 id="只要在编辑器上加入下面这一行代码保存即可。"><a href="#只要在编辑器上加入下面这一行代码保存即可。" class="headerlink" title="只要在编辑器上加入下面这一行代码保存即可。"></a>只要在编辑器上加入下面这一行代码保存即可。</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">013* * * * /backup/backup.sh</span><br></pre></td></tr></table></figure><p>本任务表示的是在每天下午1点钟把数据库备份到指定的文件夹。有关cron任务设置的详细内容可以查阅crontab手册。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;主脚本（用于备份mysql数据库）：&quot;&gt;&lt;a href=&quot;#主脚本（用于备份mysql数据库）：&quot; class=&quot;headerlink&quot; title=&quot;主脚本（用于备份mysql数据库）：&quot;&gt;&lt;/a&gt;主脚本（用于备份mysql数据库）：&lt;/h1&gt;&lt;blockquo</summary>
+      
+    
+    
+    
+    
+    <category term="mysql" scheme="https://tauleos.github.io/tags/mysql/"/>
+    
+    <category term="linux" scheme="https://tauleos.github.io/tags/linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>新旧项目在同一个端口下访问，不导致跨域的解决方案</title>
+    <link href="https://tauleos.github.io/d038552d4a66.html"/>
+    <id>https://tauleos.github.io/d038552d4a66.html</id>
+    <published>2017-10-01T14:35:04.000Z</published>
+    <updated>2019-05-07T06:07:57.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>1、首先要对nginx配置的虚拟主机添加转发机制<br><img src="/images/1556280461651.png" alt="nginx"><br>ps:记得把需要转发的项目配置在相同的1200端口号下边<br>2.端口号3000的项目A访问端口号1200的项目B的时候，项目B的静态资源会产生跨域无法访问的问题，这时候需要在项目A中把项目B的静态资源软链接过去<br>命令为：<br>     ln -s  项目B的文件路径 项目A的文件路径<br>3.上面两部配置完成后，启动项目A,把路径改成项目B的路由也可以访问，效果如下：</p><p>访问项目A的地址</p><p>访问B的地址</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;1、首先要对nginx配置的虚拟主机添加转发机制&lt;br&gt;&lt;img src=&quot;/images/1556280461651.png&quot; alt=&quot;nginx&quot;&gt;&lt;br&gt;ps:记得把需要转发的项目配置在相同的1200端口号下边&lt;br&gt;2.端口号3000的项目A访问端口号1200的项</summary>
+      
+    
+    
+    
+    
+    <category term="nginx" scheme="https://tauleos.github.io/tags/nginx/"/>
+    
+  </entry>
+  
+</feed>

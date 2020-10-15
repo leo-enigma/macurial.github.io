@@ -1,0 +1,73 @@
+@charset "utf-8";
+
+@import "_partial/normalize";
+@import "_partial/base";
+@import "_partial/header";
+@import "_partial/home-post-list";
+@import "_partial/archive-post-list";
+@import "_partial/post";
+@import "_partial/footer";
+@import "_partial/mq";
+@import "_partial/copyright";
+
+@font-face {
+    font-family: 'sourcesanspro';
+    src: url('../font/sourcesanspro.woff2') format('woff2'),
+         url('../font/sourcesanspro.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: url('../font/Merriweather-Light.ttf') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: url('../font/Merriweather-LightItalic.ttf') format('woff2');
+    font-weight: 300;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: url('../font/Merriweather-Regular.ttf') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: url('../font/Merriweather-Italic.ttf') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: url('../font/Merriweather-Bold.ttf') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: url('../font/Merriweather-BoldItalic.ttf') format('woff2');
+    font-weight: 700;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: url('../font/Merriweather-Black.ttf') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Merriweather';
+    src: url('../font/Merriweather-BlackItalic.ttf') format('woff2');
+    font-weight: 900;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'montserrat';
+    src:url('../font/montserrat-900-l.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+}

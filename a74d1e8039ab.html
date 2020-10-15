@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> js基础夯实-彻底搞懂this的指向问题 · Leo's Blog</title><meta name="description" content="js基础夯实-彻底搞懂this的指向问题 - Tauleos"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://tauleos.github.io/atom.xml" title="Leo's Blog"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Leo's Blog" type="application/atom+xml">
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">HOME</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVES</a></li><li class="nav-list-item"><a href="/tags/" target="_self" class="nav-list-link">TAGS</a></li><li class="nav-list-item"><a href="https://github.com/Tauleos" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">js基础夯实-彻底搞懂this的指向问题</h1><div class="post-info">2019年4月12日</div><div class="post-content"><blockquote>
+<p>this 关键字是 JavaScript 中最复杂的机制之一，是一个特别的关键字，被自动定义在所有函数的作用域中.</p>
+</blockquote>
+<a id="more"></a>
+<h1 id="为什么要搞懂this"><a href="#为什么要搞懂this" class="headerlink" title="为什么要搞懂this"></a>为什么要搞懂this</h1><ul>
+<li>面向oop编程需要知道什么是this</li>
+<li>在各种function调用过程中可以清晰的弄懂为什么。</li>
+<li>可以更好的理解大师们的代码</li>
+<li>防止面试被咔嚓。。。（血的教训）</li>
+</ul>
+<h1 id="this是什么？"><a href="#this是什么？" class="headerlink" title="this是什么？"></a>this是什么？</h1><p>顾名思义，this就是一个指针，但是他并不是指向自身！<strong>而是指向调用函数的对象</strong>。(这句话很重要。也是本篇文章贯穿始终的主旨。)</p>
+<h1 id="this的指向判定标准"><a href="#this的指向判定标准" class="headerlink" title="this的指向判定标准"></a>this的指向判定标准</h1><h4 id="前人的判定"><a href="#前人的判定" class="headerlink" title="前人的判定"></a>前人的判定</h4><ol>
+<li>函数是否是<code>new</code>调用，如果是，则指向<code>new</code>创建的实例。</li>
+<li>函数是否是bind方法返回的？如果是，则this指向指定对象。</li>
+<li>函数是否是通过<code>apply/call</code>调用的？如果是，则this指向指定对象。</li>
+<li>是否作为对象的方法调用？ 如果是，则this指向该对象。</li>
+<li>this指向全局。</li>
+</ol>
+<h4 id="为什么这样判定？"><a href="#为什么这样判定？" class="headerlink" title="为什么这样判定？"></a>为什么这样判定？</h4><p>为什么通过这五种方式来判定呢？我们首先要知道this的绑定规则有哪些？</p>
+<ul>
+<li>默认绑定</li>
+<li>隐式绑定</li>
+<li>显示绑定</li>
+<li>new 绑定</li>
+</ul>
+<p>下面我们来分别挨个说明每个规则，来验证我们上述的判定标准。</p>
+<h2 id="默认绑定"><a href="#默认绑定" class="headerlink" title="默认绑定"></a>默认绑定</h2><p>在不能应用其他绑定规则时使用的默认规则，通常是独立函数调用。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getName</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;Hello&#x27;</span>,<span class="built_in">this</span>.name);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> name = <span class="string">&#x27;mySelf&#x27;</span>;</span><br><span class="line">getName()</span><br></pre></td></tr></table></figure>
+<p>在调用<code>getName</code>的时候,应用了默认绑定，在非严格模式下<code>this</code>指向全局对象,严格模式下<code>this</code>是<code>undefined</code>,</p>
+<ul>
+<li>在浏览器模式下<code>this</code>指向了全局对象<code>window</code>,所以运行结果是<code>HellomySelf</code></li>
+<li>在node环境下<code>this</code>指向的全局对象是<code>node-runtime</code></li>
+</ul>
+<blockquote>
+<p>在该文章中我们主要讨论浏览器中的表现。</p>
+</blockquote>
+<h2 id="隐式绑定"><a href="#隐式绑定" class="headerlink" title="隐式绑定"></a>隐式绑定</h2><p>函数的调用存在上下文关系,典型案例如abc.foo():</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    tag: <span class="string">&#x27;a&#x27;</span>,</span><br><span class="line">    func: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;b&#x27;</span>;</span><br><span class="line">obj.func();</span><br></pre></td></tr></table></figure>
+<p>执行结果是<code>a</code>；那如果我把sayHi的定义提升到外边，如下所示：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    tag: <span class="string">&#x27;obj&#x27;</span>,</span><br><span class="line">    func: h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span>;</span><br><span class="line">obj.func();</span><br></pre></td></tr></table></figure>
+<p>执行结果跟上面是一样的。这是因为在函数<code>sayHi</code>调用的时候,此时的上下文对象属于<code>person</code>,<strong>隐式绑定会将函数中的<code>this</code>绑定到<code>person</code>这个上下文对象上</strong></p>
+<blockquote>
+<p>需要注意的是：在嵌套对象的调用时，只有离<code>this</code>最近的那一层会影响到调用位置。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">    tag: <span class="string">&#x27;obj1&#x27;</span>,</span><br><span class="line">    func: h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">  tag:<span class="string">&#x27;obj2&#x27;</span>,</span><br><span class="line">  obj:obj1</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span>;</span><br><span class="line">obj2.obj.func();</span><br></pre></td></tr></table></figure>
+<p>结果是<code>obj1</code>,这是因为只有执行到<code>obj1.func</code>的时候，才能确定函数<code>h</code>中<code>this</code>指向的上下文对象为<code>obj1</code>.</p>
+<div class="tip">
+    隐式绑定有一个很大的坑，就是会丢失绑定。也就是说，我们以为的this指向，其实并不是this真正的指向（我们以为他是雷锋，但是他却是雷峰塔）
+</div>
+
+<p>隐式绑定的丢失主要体现在两个方面:</p>
+<ol>
+<li><p>函数重新赋值,如下面代码所示:</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">  tag:<span class="string">&#x27;obj1&#x27;</span>,</span><br><span class="line">  func:h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span></span><br><span class="line"><span class="keyword">var</span> callh = obj1.func;</span><br><span class="line">callh(); <span class="comment">//window</span></span><br></pre></td></tr></table></figure>
+<p><strong>这是因为<code>callh</code>直接指向了函数<code>h</code>的引用，在执行<code>callh</code>的时候上下文对象为<code>document.window</code></strong></p>
+</li>
+<li><p>在回掉函数和事件回调中也会丢失绑定,如下代码所示</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">  tag:<span class="string">&#x27;obj1&#x27;</span>,</span><br><span class="line">  func:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj2 = &#123;</span><br><span class="line">  tag:<span class="string">&#x27;obj2&#x27;</span>,</span><br><span class="line">  func:h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span></span><br><span class="line">obj1.func(); <span class="comment">// window</span></span><br><span class="line"><span class="built_in">setTimeout</span>(obj2.func,<span class="number">200</span>); <span class="comment">// window</span></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">  obj2.func()</span><br><span class="line">&#125;,<span class="number">200</span>)           <span class="comment">//obj2</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一个输出是因为命中了默认绑定,<code>this</code>指向了<code>document.window</code></li>
+<li>第二个输出是因为<code>obj2.func</code>赋值给了<code>setTimeout</code>的回调入参之后又执行这个入参，所以隐式绑定丢失，<code>this</code>指向了<code>document.window</code></li>
+<li>第三条输出是因为命中了隐式绑定，<code>this</code>指向了<code>obj2</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="显式绑定"><a href="#显式绑定" class="headerlink" title="显式绑定"></a>显式绑定</h2><p>通过 <code>call,apply,bind</code> 的方式，显式的指定<code>this</code>所指向的对象。<code>call,apply,bind</code>的第一个参数，就是对应函数的<code>this</code>所指向的对象。<code>call</code>和<code>apply</code>的作用一样，只是传参方式不同。<code>call</code>和<code>apply</code>都会执行对应的函数，而<code>bind</code>方法不会。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">h</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="built_in">this</span>.tag)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">    tag: <span class="string">&#x27;obj1&#x27;</span>,</span><br><span class="line">    func: h</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> tag = <span class="string">&#x27;window&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> h2 = <span class="function"><span class="keyword">function</span>(<span class="params">func</span>)</span>&#123;</span><br><span class="line">  func()</span><br><span class="line">&#125;</span><br><span class="line">h2.call(obj1,obj1.func)   <span class="comment">//window</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>因为<code>obj1.func</code>作为入参传入的时候,已经丢失了隐式绑定的<code>this</code></strong></p>
+<h2 id="new关键字绑定"><a href="#new关键字绑定" class="headerlink" title="new关键字绑定"></a><code>new</code>关键字绑定</h2><p>使用<code>new</code>来调用函数，会自动执行下面的操作：</p>
+<ol>
+<li>创建一个新对象</li>
+<li>将构造函数的作用域赋值给新对象，即<code>this</code>指向这个新对象</li>
+<li>执行构造函数中的代码</li>
+<li>返回新对象</li>
+</ol>
+<h1 id="绑定优先级"><a href="#绑定优先级" class="headerlink" title="绑定优先级"></a>绑定优先级</h1><blockquote>
+<p>new 绑定 &gt; 显式绑定 &gt; 隐式绑定 &gt; 默认绑定</p>
+</blockquote>
+<h1 id="绑定例外"><a href="#绑定例外" class="headerlink" title="绑定例外"></a>绑定例外</h1><p>如果我们将<code>null</code>或者是<code>undefined</code>作为<code>this</code>的绑定对象传入<code>call、apply、bind</code>, 这些值在调用时会被忽略，实际应用的是默认绑定规则。</p>
+<h1 id="箭头函数"><a href="#箭头函数" class="headerlink" title="箭头函数"></a>箭头函数</h1><p>箭头函数是 ES6 中新增的，它和普通函数有一些区别，箭头函数没有自己的 this，它的 this 继承于外层代码库中的 this。箭头函数在使用时，需要注意以下几点:</p>
+<ul>
+<li>函数体内的 this 对象，继承的是外层代码块的 this。</li>
+<li>不可以当作构造函数，也就是说，不可以使用 new 命令，否则会抛出一个错误。</li>
+<li>不可以使用 arguments 对象，该对象在函数体内不存在。如果要用，可以用 rest 参数代替。</li>
+<li>不可以使用 yield 命令，因此箭头函数不能用作 Generator 函数。</li>
+<li>箭头函数没有自己的 this，所以不能用 call()、apply()、bind() 这些方法去改变 this 的指向.</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1 . 函数是否在 new 中调用 (new 绑定)，如果是，那么 this 绑定的是新创建的对象。<br>2 . 函数是否通过 call,apply 调用，或者使用了 bind(即硬绑定)，如果是，那么 this 绑定的就是指定的对象。<br>3 . 函数是否在某个上下文对象中调用 (隐式绑定)，如果是的话，this 绑定的是那个上下文对象。一般是 obj.foo()。<br>4 . 如果以上都不是，那么使用默认绑定。如果在严格模式下，则绑定到 undefined，否则绑定到全局对象。<br>5 . 如果把 Null 或者 undefined 作为 this 的绑定对象传入 call、apply 或者 bind，这些值在调用时会被忽略，实际应用的是默认绑定规则。<br>6 . 如果是箭头函数，箭头函数的 this 继承的是外层代码块的 this。</p>
+<p>参考</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5c96d0c751882511c832ff7b">嗨，你真的懂this吗？</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2010/04/using_this_keyword_in_javascript.html">Javascript 的 this 用法</a></li>
+</ul>
+</div></article></div></main><footer><div class="paginator"><a href="/96cef8857dec.html" class="prev">上一篇</a><a href="/abff08f12a22.html" class="next">下一篇</a></div><div id="gitalk-container"></div><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" async></script><script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js" async></script><script>var ds = document.createElement('link');
+ds.rel = 'stylesheet';ds.async = true;
+ds.href = 'https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css';
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+window.onload = function() {
+  var gitalk = new Gitalk({
+    clientID: '62e01f3aa3f140c5af8a',
+    clientSecret: '8f02698609ba488706c5e67839f0bbf46861554f',
+    repo: 'Tauleos.github.io',
+    owner: 'Tauleos',
+    admin: ['Tauleos'],
+    id: md5(window.location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+  gitalk.render('gitalk-container');
+}</script><div class="copyright"><p id="host_by"><span id="busuanzi_container_site_pv">&nbsp;本站总访问量 &nbsp;<span id="busuanzi_value_site_pv"><i class="fa fa-spinner"></i></span> 次,</span><span id="busanzi_container_site_uv">&nbsp;本站总访问人数 &nbsp;<span id="busuanzi_value_site_uv"><i class="fa fa-spinner"></i></span> 次.</span></p><p>© 2017 - 2020 created by <a href="https://tauleos.github.io">Tauleos</a>,Looking for better life and peace.</p><script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body></html>
