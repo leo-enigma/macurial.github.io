@@ -1,33 +1,32 @@
 <!DOCTYPE html><html lang="zh-cn"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> php mysql批量插入 · Leo's Blog</title><meta name="description" content="php mysql批量插入 - Tauleos"><meta name="google-site-verification" content="y-sRxe2Toq8nFRU8PiEYywkdUoWdk_UYysZDKbnM7Ck"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="search" type="application/opensearchdescription+xml" href="https://tauleos.github.io/atom.xml" title="Leo's Blog"><meta name="generator" content="Hexo 5.2.0"><link rel="alternate" href="/atom.xml" title="Leo's Blog" type="application/atom+xml">
-</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">HOME</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVES</a></li><li class="nav-list-item"><a href="/tags/" target="_self" class="nav-list-link">TAGS</a></li><li class="nav-list-item"><a href="https://github.com/Tauleos" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">php mysql批量插入</h1><div class="post-info">2017年10月1日</div><div class="post-content"><h1 id="使用insert-into-插入："><a href="#使用insert-into-插入：" class="headerlink" title="使用insert into 插入："></a>使用insert into 插入：</h1><p><img src="/images/1557048704921.png" alt="insert"></p>
-<a id="more"></a>
-
-<h1 id="使用事务脚本提交"><a href="#使用事务脚本提交" class="headerlink" title="使用事务脚本提交"></a>使用事务脚本提交</h1><blockquote>
-<p> vi /backup/backup.sh</p>
+</head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">HOME</a></li><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVES</a></li><li class="nav-list-item"><a href="/tags/" target="_self" class="nav-list-link">TAGS</a></li><li class="nav-list-item"><a href="https://github.com/Tauleos" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><main class="container"><div class="post"><article class="post-block"><h1 class="post-title">php mysql批量插入</h1><div class="post-info">2017年10月1日</div><div class="post-content"><h2 id="一、Insert-Into："><a href="#一、Insert-Into：" class="headerlink" title="一、Insert Into："></a>一、Insert Into：</h2><blockquote>
+<p>使用<code>insert into</code> 插入，代码如下：</p>
 </blockquote>
-<h2 id="现在把以下几行命令输入到-backup-sh-文件中："><a href="#现在把以下几行命令输入到-backup-sh-文件中：" class="headerlink" title="现在把以下几行命令输入到 backup.sh 文件中："></a>现在把以下几行命令输入到 backup.sh 文件中：</h2><p><img src="/images/1557048885175.png" alt="shell"></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$params = <span class="keyword">array</span>(‘value’=&gt;’<span class="number">50</span>′);</span><br><span class="line">set_time_limit(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">echo</span> date(“H:i:s”);</span><br><span class="line"><span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;<span class="number">2000000</span>;$i++)&#123;</span><br><span class="line">  $connect_mysql-&gt;insert($params);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">echo</span> date(“H:i:s”); </span><br></pre></td></tr></table></figure>
+<div class="tip">最后显示为：**23:25:05 01:32:05**, 。。。。。 也就是花了2个小时多! 😢</div>
+
+<h2 id="二、事务"><a href="#二、事务" class="headerlink" title="二、事务"></a>二、事务</h2><blockquote>
+<p>使用事务提交，批量插入数据库(每隔10W条提交下),代码如下：</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">echo</span> date(“H:i:s”); </span><br><span class="line">$connect_mysql-&gt;query(‘BEGIN’);</span><br><span class="line">$params = <span class="keyword">array</span>(‘value’=&gt;’<span class="number">50</span>′);</span><br><span class="line"><span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;<span class="number">2000000</span>;$i++)&#123;</span><br><span class="line">  $connect_mysql-&gt;insert($params);</span><br><span class="line">  <span class="keyword">if</span>($i%<span class="number">100000</span>==<span class="number">0</span>)&#123;</span><br><span class="line">    $connect_mysql-&gt;query(‘COMMIT’);$connect_mysql-&gt;query(‘BEGIN’);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">$connect_mysql-&gt;query(‘COMMIT’);</span><br><span class="line"><span class="keyword">echo</span> date(“H:i:s”); </span><br></pre></td></tr></table></figure>
+<div class="tip">最后显示消耗的时间为：**22:56:13 23:04:00**，一共8分13秒.
+好像快了不少。。</div>
+
+<h2 id="三、优化SQL语句"><a href="#三、优化SQL语句" class="headerlink" title="三、优化SQL语句"></a>三、优化SQL语句</h2><blockquote>
+<p>使用优化SQL语句：将SQL语句进行拼接，使用 <code>insert into table () values  (),(),(),()</code>然后再一次性插入，</p>
 <blockquote>
-<p>脚本说明</p>
+<p>如果字符串太长，则需要配置下MYSQL，在mysql 命令行中运行 ：</p>
 </blockquote>
-<ol>
-<li><strong>切记，在第8行命令中，在mysqldump命令后要输入自己的数据库用户名、密码及数据库名。</strong></li>
-<li>执行该脚本，首先会进入 /backup 目录，然后该脚本会把原有的旧数据库备份移动到 /oldbackup 文件夹中，接着根据系统的日期及时间生成一个文件名，在最后 mysqldump 命令会生成一个“.sql”格式的数据库备份文件。</li>
-</ol>
-<h2 id="设置-backup-sh-脚本文件的可执行许可"><a href="#设置-backup-sh-脚本文件的可执行许可" class="headerlink" title="设置 backup.sh 脚本文件的可执行许可"></a>设置 backup.sh 脚本文件的可执行许可</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">chmod +x /backup/backup.sh</span><br></pre></td></tr></table></figure>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span> global max_allowed_packet =  2*1024*1024*10;</span><br></pre></td></tr></table></figure>
+<p>代码如下：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$sql= “insert into twenty_million (value) values”; <span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;<span class="number">2000000</span>;$i++)&#123; </span><br><span class="line">  $sql.=”(’<span class="number">50</span>′),”; </span><br><span class="line">&#125;; </span><br><span class="line">$sql = substr($sql,<span class="number">0</span>,strlen($sql)<span class="number">-1</span>); $connect_mysql-&gt;query($sql); </span><br></pre></td></tr></table></figure>
+<div class="tip">
+消耗时间为：11:24:06 11:25:06;
+插入200W条测试数据仅仅用了1分钟!
+</div>
 
-<h2 id="5、执行脚本"><a href="#5、执行脚本" class="headerlink" title="5、执行脚本"></a>5、执行脚本</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./backup.sh</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>脚本运行结束后会得到以下输入。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">root@Server1:/download<span class="comment">#./backup.sh</span></span><br><span class="line">You areinDownload Directory</span><br><span class="line">Old Backup DatabaseisMoved to oldbackup folder</span><br><span class="line">database backup successful completed</span><br><span class="line">root@Server1:/download<span class="comment">#</span></span><br></pre></td></tr></table></figure>
-<p><strong>注：首次执行该脚本会有一个“no such file”的提示信息，这是由于旧备份文件还不存在。只要再次执行该脚本就没有问题了，这个问题已经不存在了。</strong></p>
-<h2 id="使用cron制订备份计划"><a href="#使用cron制订备份计划" class="headerlink" title="使用cron制订备份计划"></a>使用cron制订备份计划</h2><blockquote>
-<p>使用Cron可以定时执行该脚本，备份会自动完成。使用 crontab 命令编辑cron 执行的计划任务。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">crontab –e</span><br></pre></td></tr></table></figure>
-<h4 id="只要在编辑器上加入下面这一行代码保存即可。"><a href="#只要在编辑器上加入下面这一行代码保存即可。" class="headerlink" title="只要在编辑器上加入下面这一行代码保存即可。"></a>只要在编辑器上加入下面这一行代码保存即可。</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">013* * * * /backup/backup.sh</span><br></pre></td></tr></table></figure>
-<p><strong>本任务表示的是在每天下午1点钟把数据库备份到指定的文件夹。有关cron任务设置的详细内容可以查阅crontab手册</strong></p>
+<h2 id="四、结论"><a href="#四、结论" class="headerlink" title="四、结论"></a>四、结论</h2><p>在插入大批量数据时，第一种方法无疑是最差劲的，而第二种方法在实际应用中就比较广泛，第三种方法在插入测试数据或者其他低要求时比较合适，速度确实快。</p>
 </div></article></div></main><footer><div class="paginator"><a href="/c60b11b049f3.html" class="prev">上一篇</a><a href="/11263d42178f.html" class="next">下一篇</a></div><div id="gitalk-container"></div><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js" async></script><script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.10.0/js/md5.min.js" async></script><script>var ds = document.createElement('link');
 ds.rel = 'stylesheet';ds.async = true;
 ds.href = 'https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css';

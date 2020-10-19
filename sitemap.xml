@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://tauleos.github.io/9151c631d8a6.html</loc>
+    
+    <lastmod>2020-10-19</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://tauleos.github.io/6e9c090d6e03.html</loc>
+    
+    <lastmod>2020-10-19</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://tauleos.github.io/b7436f608b7a.html</loc>
     
     <lastmod>2020-10-15</lastmod>
@@ -17,13 +31,6 @@
   
   <url>
     <loc>https://tauleos.github.io/fa64e05e0810.html</loc>
-    
-    <lastmod>2019-05-07</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://tauleos.github.io/6e9c090d6e03.html</loc>
     
     <lastmod>2019-05-07</lastmod>
     
@@ -99,17 +106,10 @@
     
   </url>
   
-  <url>
-    <loc>https://tauleos.github.io/6f088248fe63.html</loc>
-    
-    <lastmod>2019-04-14</lastmod>
-    
-  </url>
-  
 
   <url>
     <loc>https://tauleos.github.io/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -117,77 +117,77 @@
   
   <url>
     <loc>https://tauleos.github.io/tags/js/</loc>
-    <lastmod>2020-10-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://tauleos.github.io/tags/react/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/%E7%90%86%E8%AE%BA/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://tauleos.github.io/tags/react/</loc>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/mac/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/nginx/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/php/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/mysql/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/linux/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/redis/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/http/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
     <loc>https://tauleos.github.io/tags/%E6%9E%B6%E6%9E%84/</loc>
-    <lastmod>2020-10-15</lastmod>
+    <lastmod>2020-10-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
