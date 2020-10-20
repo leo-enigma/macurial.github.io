@@ -98,10 +98,10 @@
   
   <entry>
     <title>太极图案</title>
-    <link href="https://tauleos.github.io/69d53cfb95a3.html"/>
-    <id>https://tauleos.github.io/69d53cfb95a3.html</id>
+    <link href="https://tauleos.github.io/3710a8c65723.html"/>
+    <id>https://tauleos.github.io/3710a8c65723.html</id>
     <published>2019-04-12T07:25:18.000Z</published>
-    <updated>2020-10-20T06:10:25.595Z</updated>
+    <updated>2020-10-20T06:15:36.890Z</updated>
     
     <content type="html"><![CDATA[<div class="yinyang"></div><style>  .yinyang{    display:flex;    align-items:center;    --color1: white;    --color2: black;    border-radius: 50%;    box-shadow:0 0 1em rgba(0,0,0,0.3);    width:20em;    height:20em;    /* background:lightgray; */    background-image: linear-gradient(var(--color1) 50% ,var(--color2) 50%);    animation:rotating linear 3s infinite;  }  .yinyang::before{    content:'';    box-sizing:border-box;    width:50%;    height:50%;    border-radius:50%;    border: 3em solid var(--color1);    background-color: var(--color2);    /* mix-blend-mode:screen; */  }  .yinyang::after{    content:'';    box-sizing:border-box;    width:50%;    height:50%;    border-radius:50%;    border: 3em solid var(--color2);    background-color: var(--color1);    /* mix-blend-mode:screen; */  }  @keyframes rotating {    to{      transform: rotate(360deg);    }  }</style>]]></content>
     
@@ -121,9 +121,7 @@
     
     
     
-    <category term="js" scheme="https://tauleos.github.io/tags/js/"/>
-    
-    <category term="理论" scheme="https://tauleos.github.io/tags/%E7%90%86%E8%AE%BA/"/>
+    <category term="css" scheme="https://tauleos.github.io/tags/css/"/>
     
   </entry>
   
