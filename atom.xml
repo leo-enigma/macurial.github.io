@@ -6,7 +6,7 @@
   <link href="https://tauleos.github.io/atom.xml" rel="self"/>
   
   <link href="https://tauleos.github.io/"/>
-  <updated>2020-11-05T07:05:17.022Z</updated>
+  <updated>2021-01-28T03:33:40.520Z</updated>
   <id>https://tauleos.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>阿里一面整理</title>
+    <link href="https://tauleos.github.io/58bedbf90157.html"/>
+    <id>https://tauleos.github.io/58bedbf90157.html</id>
+    <published>2021-01-28T03:15:23.000Z</published>
+    <updated>2021-01-28T03:33:40.520Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="笔试"><a href="#笔试" class="headerlink" title="笔试"></a>笔试</h2><p>参考之前的文章-<a href="./4c84e4a4db9d.html">阿里笔试题收集</a></p><h2 id="面试"><a href="#面试" class="headerlink" title="面试"></a>面试</h2><h3 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h3><h3 id="说一下自己熟悉的技术栈"><a href="#说一下自己熟悉的技术栈" class="headerlink" title="说一下自己熟悉的技术栈"></a>说一下自己熟悉的技术栈</h3><p>因为我主要列举了node,ts,vue这三个，所以下边的问题大多围绕着这几个来展开</p><h3 id="1、vue里批量更新的机制"><a href="#1、vue里批量更新的机制" class="headerlink" title="1、vue里批量更新的机制"></a>1、vue里批量更新的机制</h3><h3 id="2、介绍下浏览器的EventLoop，Node端的EventLoop"><a href="#2、介绍下浏览器的EventLoop，Node端的EventLoop" class="headerlink" title="2、介绍下浏览器的EventLoop，Node端的EventLoop"></a>2、介绍下浏览器的EventLoop，Node端的EventLoop</h3><h3 id="3、vuex有使用过吗，使用场景是怎样的"><a href="#3、vuex有使用过吗，使用场景是怎样的" class="headerlink" title="3、vuex有使用过吗，使用场景是怎样的"></a>3、vuex有使用过吗，使用场景是怎样的</h3><h3 id="4、vue中的组件通信方式"><a href="#4、vue中的组件通信方式" class="headerlink" title="4、vue中的组件通信方式"></a>4、vue中的组件通信方式</h3><h3 id="5、Node中常用的模块有哪些，有用过cluster吗？介绍下cluter"><a href="#5、Node中常用的模块有哪些，有用过cluster吗？介绍下cluter" class="headerlink" title="5、Node中常用的模块有哪些，有用过cluster吗？介绍下cluter"></a>5、Node中常用的模块有哪些，有用过cluster吗？介绍下cluter</h3><h3 id="6、cluster中是如何做到监听一个端口不报错的"><a href="#6、cluster中是如何做到监听一个端口不报错的" class="headerlink" title="6、cluster中是如何做到监听一个端口不报错的"></a>6、cluster中是如何做到监听一个端口不报错的</h3><h3 id="7、进程间通信你还知道哪些方式"><a href="#7、进程间通信你还知道哪些方式" class="headerlink" title="7、进程间通信你还知道哪些方式"></a>7、进程间通信你还知道哪些方式</h3><h3 id="8、计算机网络的知识了解的多吗？OSI七层模型里，http，tcp，ip分别对应的是哪一层"><a href="#8、计算机网络的知识了解的多吗？OSI七层模型里，http，tcp，ip分别对应的是哪一层" class="headerlink" title="8、计算机网络的知识了解的多吗？OSI七层模型里，http，tcp，ip分别对应的是哪一层"></a>8、计算机网络的知识了解的多吗？OSI七层模型里，http，tcp，ip分别对应的是哪一层</h3><h3 id="9、可以说一下https的原理吗？https为什么是安全的"><a href="#9、可以说一下https的原理吗？https为什么是安全的" class="headerlink" title="9、可以说一下https的原理吗？https为什么是安全的"></a>9、可以说一下https的原理吗？https为什么是安全的</h3><h3 id="10、https的证书还有其他的什么作用？"><a href="#10、https的证书还有其他的什么作用？" class="headerlink" title="10、https的证书还有其他的什么作用？"></a>10、https的证书还有其他的什么作用？</h3><h3 id="11、有发布过npm包吗？npm包的开发上线流程是怎样的"><a href="#11、有发布过npm包吗？npm包的开发上线流程是怎样的" class="headerlink" title="11、有发布过npm包吗？npm包的开发上线流程是怎样的"></a>11、有发布过npm包吗？npm包的开发上线流程是怎样的</h3><h3 id="12、能描述一下你之前做过的技术亮点或者业务亮点吗？"><a href="#12、能描述一下你之前做过的技术亮点或者业务亮点吗？" class="headerlink" title="12、能描述一下你之前做过的技术亮点或者业务亮点吗？"></a>12、能描述一下你之前做过的技术亮点或者业务亮点吗？</h3>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;笔试&quot;&gt;&lt;a href=&quot;#笔试&quot; class=&quot;headerlink&quot; title=&quot;笔试&quot;&gt;&lt;/a&gt;笔试&lt;/h2&gt;&lt;p&gt;参考之前的文章-&lt;a href=&quot;./4c84e4a4db9d.html&quot;&gt;阿里笔试题收集&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;面试&quot;&gt;&lt;a h</summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>阿里笔试题收集-1</title>
